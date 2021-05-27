@@ -20,7 +20,7 @@ class URL:
             self.urls = {}
     def GetDownload(self):
         print(f"Pinging URL {self.url}")
-        self.j = subprocess.Popen(["""curl -w "%%{redirect_url}" -ILsS tiny.cc/%s -o /dev/null --max-redirs 1"""%self.url], shell=True, executable="/bin/bash", stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        self.j = subprocess.Popen(["""curl -w "%%{redirect_url}" -ILsS tiny.cc/%s -o /dev/null --max-redirs 1"""%self.url], shell=True, executable="/bin/bash", stdout=subprocess.PIPE, stderr=subprocess.PIPE) #https://unix.stackexchange.com/a/515645/401349 and https://unix.stackexchange.com/a/157219/401349
         self.output = self.j.communicate()
         if self.j.returncode != 0:
             if self.j.returncode != 47:
