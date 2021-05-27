@@ -1,9 +1,15 @@
 import subprocess, json, random, sys
 
 class DownloadError(RuntimeError):
-    pass
+    """
+    Provides the output from Popen.communicate(), the entire tuple, each byte as a bytes string along with the exception (you will probably need to decode it with .decode("utf-8")).
+    To access it, use something like "except URLs.DownloadError as output:" and then it will be saved as variable output
+    """
 class NonexistentUrl(BaseException):
-    pass
+    """
+    Provides the URL that was tried along with the exception.
+    To access it, use something like "except URLs.NonexistentUrl as url:" and then it will be saved as variable url
+    """
 class URL:
     def __init__(self):
         self.GetConfig()
