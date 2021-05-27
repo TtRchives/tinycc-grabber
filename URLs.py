@@ -20,14 +20,15 @@ class URL:
             self.urls = {}
     def GetDownload(self):
         print(f"Pinging URL {self.url}")
-        self.j = subprocess.Popen(["""curl -w "%%{url_effective}" -I -L -s -S tiny.cc/%s -o /dev/null"""%self.url], shell=True, executable="/bin/bash", stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        self.j = subprocess.Popen(["""curl -w "%%{redirect_url}" -ILsS tiny.cc/%s -o /dev/null --max-redirs 1"""%self.url], shell=True, executable="/bin/bash", stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         self.output = self.j.communicate()
         if self.j.returncode != 0:
-            raise DownloadError(self.output)
+            if self.j.returncode != 47:
+                raise DownloadError(self.output)
     GetResult = GetDownload
     def WriteFile(self):
-        self.urls[self.url] = self.output[0].decode("utf-8")
-        if self.urls[self.url] == f"tiny.cc/{self.url}" or self.urls[self.url] == f"https://tiny.cc/{self.url}" or self.urls[self.url] == f"http://tiny.cc/{self.url}":
+        self.urls[self.url] = self.output[0].decode("utf-8").split('\n')[0].replace("\n","")
+        if self.urls[self.url] == f"tiny.cc/{self.url}" or self.urls[self.url] == f"https://tiny.cc/{self.url}" or self.urls[self.url] == f"http://tiny.cc/{self.url}" or self.urls[self.url] == "":
             raise NonexistentUrl(self.url)
         with open("file.json","w+") as file:
             file.write(json.dumps(self.urls))
