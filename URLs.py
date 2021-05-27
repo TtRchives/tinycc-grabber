@@ -24,18 +24,24 @@ class URL:
             self.url = ""
             for i in range(0,random.randint(*urlRange)):
                 self.url += chr(random.choice((random.randint(65,90), random.randint(97,122), random.randint(48,57)))) #first one is uppercase; 2nd is lowercase; 3rd: numbers
-    def GetConfig(self):
+        return self.url
+    def GetConfig(self, retconfig=False):
+        """
+        param retconfig: Returns the dictionary. **This may use a LOT of ram, and will substantially slow things down**
+        """
         try:
             with open("file.json") as file:
                 self.urls = json.load(file)
         except Exception:
             self.urls = {}
+        if retconfig: return self.urls
     def GetDownload(self):
         self.j = subprocess.Popen(["""curl -w "%%{redirect_url}" -ILsS tiny.cc/%s -o /dev/null --max-redirs 1"""%self.url], shell=True, executable="/bin/bash", stdout=subprocess.PIPE, stderr=subprocess.PIPE) #https://unix.stackexchange.com/a/515645/401349 and https://unix.stackexchange.com/a/157219/401349
         self.output = self.j.communicate()
         if self.j.returncode != 0:
             if self.j.returncode != 47:
                 raise DownloadError(self.output)
+        return self.output, self.url, self.j.returncode
     GetResult = GetDownload
     def WriteFile(self):
         self.urls[self.url] = self.output[0].decode("utf-8").split('\n')[0].replace("\n","")
