@@ -11,6 +11,11 @@ class NonexistentUrl(BaseException):
     To access it, use something like "except URLs.NonexistentUrl as url:" and then it will be saved as variable url
     """
 class URL:
+    """
+    You CAN change variables inside this!
+    For example, to archive a specific url, instead of calling GetURL just change instance.url = "id"
+    NOTE: The url variable DOES NOT contain the tiny.cc/, or the https, or http, or anything! For example, id 62hd would turn into https://tiny.cc/62hd.
+    """
     def __init__(self):
         self.GetConfig()
     def GetURL(self, urlRange=(1,10)):
@@ -26,7 +31,6 @@ class URL:
         except Exception:
             self.urls = {}
     def GetDownload(self):
-        print(f"Pinging URL {self.url}")
         self.j = subprocess.Popen(["""curl -w "%%{redirect_url}" -ILsS tiny.cc/%s -o /dev/null --max-redirs 1"""%self.url], shell=True, executable="/bin/bash", stdout=subprocess.PIPE, stderr=subprocess.PIPE) #https://unix.stackexchange.com/a/515645/401349 and https://unix.stackexchange.com/a/157219/401349
         self.output = self.j.communicate()
         if self.j.returncode != 0:
@@ -43,6 +47,7 @@ class URL:
 def main():
     datums = URL()
     datums.GetURL()
+    print(f"Pinging URL {datums.url}") #you can also modify datums.url, you can use that for tracker stuff (just make a wrapper that changes this variable as necessary instead of running GetURL())
     datums.GetDownload()
     datums.WriteFile()
 
