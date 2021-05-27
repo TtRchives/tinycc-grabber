@@ -9,8 +9,9 @@ class URL:
         self.GetConfig()
     def GetURL(self, urlRange=(1,10)):
         self.url = ""
-        for i in range(0,random.randint(*urlRange)):
-            self.url += chr(random.choice((random.randint(65,90), random.randint(97,122), random.randint(48,57)))) #first one is uppercase; 2nd is lowercase; 3rd: numbers
+        while self.url in list(self.urls) or self.url == "":
+            for i in range(0,random.randint(*urlRange)):
+                self.url += chr(random.choice((random.randint(65,90), random.randint(97,122), random.randint(48,57)))) #first one is uppercase; 2nd is lowercase; 3rd: numbers
     def GetConfig(self):
         try:
             with open("file.json") as file:
