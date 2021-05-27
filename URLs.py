@@ -44,12 +44,15 @@ class URL:
         with open("file.json","w+") as file:
             file.write(json.dumps(self.urls))
 
-def main():
-    datums = URL()
-    datums.GetURL()
+def wrapper():
+    """
+    Example wrapper
+    """
+    datums = URL() #create instance
+    datums.GetURL() #get a random url
     print(f"Pinging URL {datums.url}") #you can also modify datums.url, you can use that for tracker stuff (just make a wrapper that changes this variable as necessary instead of running GetURL())
-    datums.GetDownload()
-    datums.WriteFile()
-
+    datums.GetDownload() #download the url
+    datums.WriteFile() #write to json file
+main = wrapper
 if __name__ == "__main__":
     main()
