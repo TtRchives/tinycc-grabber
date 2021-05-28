@@ -1,4 +1,4 @@
-import subprocess, json, random, sys
+import subprocess, json, random, sys, time
 
 class DownloadError(RuntimeError):
     """
@@ -16,8 +16,9 @@ class URL:
     For example, to archive a specific url, instead of calling GetURL just change instance.url = "id"
     NOTE: The url variable DOES NOT contain the tiny.cc/, or the https, or http, or anything! For example, id 62hd would turn into https://tiny.cc/62hd.
     """
-    def __init__(self, provider="http://tiny.cc"):
+    def __init__(self, provider="http://tiny.cc", filename="file.json"):
         self.pos = 0
+        self.filename = filename
         self.GetConfig()
         self.provider = provider
         self.url = ""
@@ -65,7 +66,7 @@ class URL:
         self.urls[self.url] = self.output[0].decode("utf-8").split('\n')[0].replace("\n","")
         if self.urls[self.url] == f"tiny.cc/{self.url}" or self.urls[self.url] == f"https://tiny.cc/{self.url}" or self.urls[self.url] == f"http://tiny.cc/{self.url}" or self.urls[self.url] == "":
             raise NonexistentUrl(self.url)
-        with open("file.json","w+") as file:
+        with open(self.filename,"w+") as file:
             file.write(json.dumps(self.urls))
 #    def GetIncremental(self):
 #        raise NotImplementedError
@@ -90,16 +91,30 @@ def wrapper():
     """
     Example wrapper
     """
-    try:
-        with open("provider") as file:
-            prov = file.read()
-    except Exception:
-        prov = "tiny.cc"
-    datums = URL(provider=prov) #create instance
-    datums.GetURL((1,25)) #get a random url with a length from 1 to 6
-    print(f"Pinging URL {datums.url}") #you can also modify datums.url, you can use that for tracker stuff (just make a wrapper that changes this variable as necessary instead of running GetURL())
-    datums.GetDownload() #download the url
-    datums.WriteFile() #write to json file
+    from alive_progress import alive_bar
+    with alive_bar(4) as bar:
+        bar.text("Reading provider file...")
+        try:
+            with open("provider") as file:
+                prov = file.read()
+        except Exception:
+            prov = "tiny.cc"
+        bar()
+        bar.text("Setting up instance...")
+        datums = URL(provider=prov) #create instance
+        time.sleep(0.1)
+        bar()
+        bar.text("Getting URL...")
+        datums.GetURL((1,25)) #get a random url with a length from 1 to 6
+        time.sleep(0.1)
+        bar()
+        bar.text("Getting redirect...")
+        print(f"Pinging URL {datums.url}") #you can also modify datums.url, you can use that for tracker stuff (just make a wrapper that changes this variable as necessary instead of running GetURL())
+        datums.GetDownload() #download the url
+        bar()
+        bar.text("Writing to file...")
+        datums.WriteFile() #write to json file
+        time.sleep(0.1)
 main = wrapper
 if __name__ == "__main__":
     main()
