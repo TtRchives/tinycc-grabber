@@ -55,7 +55,7 @@ def wrapper():
     Example wrapper
     """
     datums = URL() #create instance
-    datums.GetURL((1,25)) #get a random url
+    datums.GetURL((1,6)) #get a random url with a length from 1 to 6
     print(f"Pinging URL {datums.url}") #you can also modify datums.url, you can use that for tracker stuff (just make a wrapper that changes this variable as necessary instead of running GetURL())
     datums.GetDownload() #download the url
     datums.WriteFile() #write to json file
