@@ -91,30 +91,17 @@ def wrapper():
     """
     Example wrapper
     """
-    from alive_progress import alive_bar
-    with alive_bar(4) as bar:
-        bar.text("Reading provider file...")
-        try:
-            with open("provider") as file:
-                prov = file.read()
-        except Exception:
-            prov = "tiny.cc"
-        bar()
-        bar.text("Setting up instance...")
-        datums = URL(provider=prov) #create instance
-        time.sleep(0.1)
-        bar()
-        bar.text("Getting URL...")
-        datums.GetURL((1,25)) #get a random url with a length from 1 to 6
-        time.sleep(0.1)
-        bar()
-        bar.text("Getting redirect...")
-        print(f"Pinging URL {datums.url}") #you can also modify datums.url, you can use that for tracker stuff (just make a wrapper that changes this variable as necessary instead of running GetURL())
-        datums.GetDownload() #download the url
-        bar()
-        bar.text("Writing to file...")
-        datums.WriteFile() #write to json file
-        time.sleep(0.1)
+    try:
+        with open("provider") as file:
+            prov = file.read()
+    except Exception:
+        prov = "tiny.cc"
+    datums = URL(provider=prov) #create instance
+    datums.GetURL((1,25)) #get a random url with a length from 1 to 6
+    print(f"Pinging URL {datums.url}") #you can also modify datums.url, you can use that for tracker stuff (just make a wrapper that changes this variable as necessary instead of running GetURL())
+    datums.GetDownload() #download the url
+    datums.WriteFile() #write to json file
+
 main = wrapper
 if __name__ == "__main__":
     main()
